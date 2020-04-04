@@ -1,0 +1,5 @@
+jdbc.jdbcUrl=jdbc:mysql://localhost:3306/ssm-crud?characterEncoding=utf-8
+jdbc.driverClass=com.mysql.jdbc.Driver
+jdbc.user=root
+jdbc.password=
+

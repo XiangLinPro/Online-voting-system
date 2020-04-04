@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans			
+	http://www.springframework.org/schema/beans/spring-beans.xsd			
+	http://www.springframework.org/schema/aop 					
+	http://www.springframework.org/schema/aop/spring-aop.xsd	
+	http://www.springframework.org/schema/context	
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd	
+	http://www.springframework.org/schema/tx 	
+	http://www.springframework.org/schema/tx/spring-tx.xsd	
+	http://www.springframework.org/schema/mvc	
+	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+<!-- 配置自定扫描的包 -->
+<context:component-scan base-package="login"></context:component-scan>
+<!-- 配置视图解析器: 如何把 handler 方法返回值解析为实际的物理视图 -->
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<property name="prefix" value="/WEB-INF/jsp/"></property>
+<property name="suffix" value=".jsp"></property>
+</bean>
+<!-- 在实际开发中通常都需配置 mvc:annotation-driven 标签 -->
+<mvc:annotation-driven></mvc:annotation-driven>
+<mvc:default-servlet-handler/>
+<!-- 配置 MultipartResolver -->
+<bean id="multipartResolver"
+class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+<property name="defaultEncoding" value="UTF-8"></property>
+</bean>
+<bean id="messageSource"
+class="org.springframework.context.support.ResourceBundleMessageSource">
+<property name="basename" value="messages">
+</property>
+</bean>
+<!-- 引入配置文件 -->
+<bean id="propertyConfigurer"
+	class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<property name="location" value="classpath:jdbc.properties" />
+</bean>
+<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	destroy-method="close">
+	<property name="driverClassName" value="${jdbc.driver}" />
+	<property name="url" value="${jdbc.url}" />
+	<property name="username" value="${jdbc.username}" />
+	<property name="password" value="${jdbc.password}" />
+	<!-- 事务是否自动提交 -->
+	<property name="defaultAutoCommit" value="${defaultAutoCommit}"></property>
+</bean>
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="dataSource" />
+	<!-- 自动扫描mapping.xml文件 -->
+	<property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+</bean>
+<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+	<constructor-arg ref="sqlSessionFactory" />
+</bean>
+<bean id="login1" class="login.Login" >
+	<property name="sqlSession" ref="sqlSessionTemplate"/>
+</bean>
+<bean id="transactionManager"
+	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<property name="dataSource" ref="dataSource" />
+</bean>
+<!-- 事务管理方法匹配规则 -->
+<tx:advice id="txAdvice" transaction-manager="transactionManager">
+<tx:attributes>
+<tx:method name="delete*" propagation="REQUIRED" read-only="false" 
+           rollback-for="java.lang.Exception"/>
+<tx:method name="insert*" propagation="REQUIRED" read-only="true" 
+           rollback-for="java.lang.Exception" /> 
+<tx:method name="update*" propagation="REQUIRED" read-only="false" 
+           rollback-for="java.lang.Exception" />
+<tx:method name="save*" propagation="REQUIRED" read-only="false" 
+           rollback-for="java.lang.Exception" />
+<tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+</tx:attributes>
+</tx:advice>
+<aop:config>
+<aop:pointcut id="allServiceMethods" expression="execution(* login..*.*(..))" />
+<aop:advisor pointcut-ref="allServiceMethods" advice-ref="txAdvice" />
+</aop:config>
+
+</beans>

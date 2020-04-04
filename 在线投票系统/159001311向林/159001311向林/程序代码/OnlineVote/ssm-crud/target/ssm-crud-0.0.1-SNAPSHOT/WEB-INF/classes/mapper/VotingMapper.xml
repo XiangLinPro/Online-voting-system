@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xl.crud.dao.VotingMapper">
+  <resultMap id="BaseResultMap" type="com.xl.crud.bean.Voting">
+    <id column="uid" jdbcType="INTEGER" property="uid" />
+    <id column="pkid" jdbcType="INTEGER" property="pkid" />
+    <id column="singerid" jdbcType="INTEGER" property="singerid" />
+    <result column="core" jdbcType="INTEGER" property="core" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    uid, pkid, singerid, core
+  </sql>
+  <select id="selectByExample" parameterType="com.xl.crud.bean.VotingExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from voting
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.xl.crud.bean.VotingKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from voting
+    where uid = #{uid,jdbcType=INTEGER}
+      and pkid = #{pkid,jdbcType=INTEGER}
+      and singerid = #{singerid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.xl.crud.bean.VotingKey">
+    delete from voting
+    where uid = #{uid,jdbcType=INTEGER}
+      and pkid = #{pkid,jdbcType=INTEGER}
+      and singerid = #{singerid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.xl.crud.bean.VotingExample">
+    delete from voting
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.xl.crud.bean.Voting">
+    insert into voting (uid, pkid, singerid, 
+      core)
+    values (#{uid,jdbcType=INTEGER}, #{pkid,jdbcType=INTEGER}, #{singerid,jdbcType=INTEGER}, 
+      #{core,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xl.crud.bean.Voting">
+    insert into voting
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="pkid != null">
+        pkid,
+      </if>
+      <if test="singerid != null">
+        singerid,
+      </if>
+      <if test="core != null">
+        core,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="pkid != null">
+        #{pkid,jdbcType=INTEGER},
+      </if>
+      <if test="singerid != null">
+        #{singerid,jdbcType=INTEGER},
+      </if>
+      <if test="core != null">
+        #{core,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.xl.crud.bean.VotingExample" resultType="java.lang.Long">
+    select count(*) from voting
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update voting
+    <set>
+      <if test="record.uid != null">
+        uid = #{record.uid,jdbcType=INTEGER},
+      </if>
+      <if test="record.pkid != null">
+        pkid = #{record.pkid,jdbcType=INTEGER},
+      </if>
+      <if test="record.singerid != null">
+        singerid = #{record.singerid,jdbcType=INTEGER},
+      </if>
+      <if test="record.core != null">
+        core = #{record.core,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update voting
+    set uid = #{record.uid,jdbcType=INTEGER},
+      pkid = #{record.pkid,jdbcType=INTEGER},
+      singerid = #{record.singerid,jdbcType=INTEGER},
+      core = #{record.core,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xl.crud.bean.Voting">
+    update voting
+    <set>
+      <if test="core != null">
+        core = #{core,jdbcType=INTEGER},
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=INTEGER}
+      and pkid = #{pkid,jdbcType=INTEGER}
+      and singerid = #{singerid,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 自己新加的分数加一 -->
+   <!-- <update id="updateBysingeridKey" parameterType="BaseResultMap">
+    update voting set core=core+1 where singerid=#{XXX}
+  </update>  -->
+  <update id="updateByPrimaryKey" parameterType="com.xl.crud.bean.Voting">
+    update voting
+    set core = #{core,jdbcType=INTEGER}
+    where uid = #{uid,jdbcType=INTEGER}
+      and pkid = #{pkid,jdbcType=INTEGER}
+      and singerid = #{singerid,jdbcType=INTEGER}
+  </update>
+</mapper>
